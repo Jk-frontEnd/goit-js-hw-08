@@ -1,16 +1,21 @@
 import Player from '@vimeo/player';
+import throttle from 'lodash.throttle';
 
-const player = new Player('handstick', {
-    id: 19231868,
-    width: 640
-});
+const videoTiming = "videoplayer-current-time";
 
 const iframe = document.querySelector('iframe');
-
-player.on('play', function() {
-    console.log('played the video!');
+const player = new Player(iframe, {
+    loop: true,
+    fullscreen: true,
+    quality: '1080p',
 });
 
-player.getVideoTitle().then(function(title) {
-    console.log('title:', title);
-});
+const getCurrentTime = (currentTime) => {
+    const seconds = currentTime.seconds;
+    localStorage.setItem(videoTiming, JSON.stringify(seconds));
+};
+
+
+player.on('timeupdate', throttle(getCurrentTime, 1000));
+
+player.setCurrentTime(JSON.parse(localStorage.getItem(videoTiming) || 0));
