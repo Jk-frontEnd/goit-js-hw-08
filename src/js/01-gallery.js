@@ -20,20 +20,20 @@ const galleryItemsMarkup = galleryItems
   })
   .join("");
 
-const galleryElem = document.querySelector("ul.gallery");
+const list = document.querySelector("ul.gallery");
 
-galleryElem.innerHTML = galleryItemsMarkup;
-galleryElem.addEventListener("click", selectItem);
+list.innerHTML = galleryItemsMarkup;
+list.addEventListener("click", selectItem);
 
-function selectItem(event) {
-  event.preventDefault();
+function selectItem(evt) {
+  evt.preventDefault();
 
-  if (!event.target.classList.contains("gallery__image")) {
+  if (!evt.target.classList.contains("gallery__image")) {
     return;
   }
 
-  const instance = basicLightbox.create(
-    `<img src="${event.target.dataset.source}">`,
+  const instance = SimpleLightbox.open(
+    `<img src="${evt.target.dataset.source}">`,
     {
       onShow: (instance) => {
         document.addEventListener("keydown", onEscKeyPress);
