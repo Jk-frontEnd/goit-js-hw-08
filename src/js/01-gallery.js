@@ -2,27 +2,27 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
 import { galleryItems } from './gallery-items';
+import simpleLightbox from "simplelightbox";
 // Change code below this line
-
-const galleryItemsMarkup = galleryItems
-  .map((item) => {
-    return `
-    <div class="gallery__item">
-    <a class="gallery__link" href="${item.original}">
-      <img
-        class="gallery__image"
-        src="${item.preview}"
-        data-source="${item.original}"
-        alt="${item.description}"
-      />
-    </a>
-  </div>`;
-  })
-  .join("");
 
 const list = document.querySelector("ul.gallery");
 
-list.innerHTML = galleryItemsMarkup;
+
+const galleryMarkup = galleryItems
+  .map(
+    ({ preview, original, description }) =>
+      `<a class="gallery__item" href="${original}">
+      <img
+         class="gallery__image"
+         src="${preview}"
+         alt="${description}"
+    />
+  </a>`
+  )
+  .join('');
+
+
+list.innerHTML = galleryMarkup;
 list.addEventListener("click", selectItem);
 
 function selectItem(evt) {
@@ -32,7 +32,7 @@ function selectItem(evt) {
     return;
   }
 
-  const instance = SimpleLightbox.open(
+  const instance = simpleLightbox(
     `<img src="${evt.target.dataset.source}">`,
     {
       onShow: (instance) => {
@@ -51,3 +51,12 @@ function selectItem(evt) {
     }
   }
 }
+
+new SimpleLightbox('.gallery a', {
+  captions: true,
+  captionType: 'attr',
+  captionsData: 'alt',
+  captionPosition: 'bottom',
+  captionDelay: 250,
+});
+
