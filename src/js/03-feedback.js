@@ -1,46 +1,40 @@
 import throttle from 'lodash.throttle';
 
 const form = document.querySelector(".feedback-form");
-const storageKey = "feedback-form-state";
+const STORAGE_KEY = "feedback-form-state";
 
-const items = {
-  form: document.querySelector('.feedback-form'),
-  email: document.querySelector('input'),
-  message: document.querySelector('textarea'),
-};
-
-items.form.addEventListener('submit', onFormSubmit);
-items.form.addEventListener('input', throttle(onFormInput, 500));
-
-let formData = {
+const formData = {
   email: '',
   message: '',
-};
-
-processingTheForm();
-
-function onFormSubmit(e) {
-  e.preventDefault();
-  localStorage.removeItem(storageKey);
-  formData.email = items.email.value;
-  formData.message = items.message.value;
-  e.currentTarget.reset();
+  submit: '',
 }
 
-function onFormInput(e) {
-  formData[e.target.name] = e.target.value;
-  localStorage.setItem(storageKey, JSON.stringify(formData));
+const email = document.querySelector(("input"));
+const message = document.querySelector(("textarea"));
+const submit = document.querySelector(("button"));
+
+populateForm();
+
+const throttledSaveInput = throttle(saveInput, 500);
+
+// Add input event listeners
+email.addEventListener('input', throttledSaveInput);
+message.addEventListener('input', throttledSaveInput);
+submit.addEventListener('click', throttledSaveInput); // Change to 'click' for a button
+
+function saveInput() {
+  formData.email = email.value;
+  formData.message = message.value;
+  formData.submit = submit.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
-function processingTheForm() {
-  const formValues = localStorage.getItem(storageKey);
-  const objectValues = JSON.parse(formValues);
-
-  if (objectValues) {
-    formData = objectValues;
-    items.email.value = objectValues.email || '';
-    items.message.value = objectValues.message || '';
-    formData = objectValues.email || '';
-    formData = objectValues.message || '';
+function populateForm() {
+  const storedData = localStorage.getItem(STORAGE_KEY);
+  if (storedData) {
+    const parsedData = JSON.parse(storedData);
+    email.value = parsedData.email || '';
+    message.value = parsedData.message || '';
+    submit.value = parsedData.submit || '';
   }
 }
